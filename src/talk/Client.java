@@ -2,13 +2,14 @@ package talk;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.io.*;
+import javax.swing.plaf.*;
+import javax.swing.plaf.basic.*;
 
 public class Client implements ActionListener {
 	JPanel p1;
@@ -33,6 +34,8 @@ public class Client implements ActionListener {
 		p1.setBackground(new Color(0, 9, 84));
 		p1.setBounds(0, 0, 450, 70);
 		f.add(p1);
+		
+		
 
 		ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("talk/pics/3.png"));
 		Image i2 = i1.getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT);
@@ -77,12 +80,37 @@ public class Client implements ActionListener {
 		t.setInitialDelay(500);
 
 		p = new JPanel();
-
-		p.setBounds(5, 75, 440, 570);
-		p.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
+		//p.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
 		p.setBackground(Color.white);
-		f.add(p);
+		
+		JScrollPane s = new JScrollPane(p);
+		s.setBounds(5, 75, 440, 570);
+		s.setBorder(BorderFactory.createEmptyBorder());
 
+
+		ScrollBarUI myUI = new BasicScrollBarUI() {
+		    @Override
+		    protected JButton createDecreaseButton(int orientation) {
+		        JButton button = super.createDecreaseButton(orientation);
+		        button.setBackground(new Color(0, 9, 84));
+		        button.setForeground(Color.WHITE);
+		        this.thumbColor = new Color(0, 9, 84);
+		        return button;
+		    }
+
+		    @Override
+		    protected JButton createIncreaseButton(int orientation) {
+		        JButton button = super.createIncreaseButton(orientation);
+		        button.setBackground(new Color(0, 9, 84));
+		        button.setForeground(Color.WHITE);
+		        this.thumbColor = new Color(0, 9, 84);
+		        return button;
+		    }
+		};
+
+		s.getVerticalScrollBar().setUI(myUI);
+		f.add(s);
+		
 		t1 = new JTextField();
 		t1.setBounds(5, 655, 310, 40);
 		t1.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
@@ -94,6 +122,7 @@ public class Client implements ActionListener {
 				try {
 					if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 						String out = t1.getText();
+						saveToFile(out);
 						JPanel pan = formatLabel(out);
 						p.setLayout(new BorderLayout());
 						JPanel right_panel = new JPanel(new BorderLayout());
@@ -143,6 +172,7 @@ public class Client implements ActionListener {
 
 		try {
 			String out = t1.getText();
+			saveToFile(out);
 			JPanel pan = formatLabel(out);
 			p.setLayout(new BorderLayout());
 			JPanel right_panel = new JPanel(new BorderLayout());
@@ -159,6 +189,23 @@ public class Client implements ActionListener {
 		}
 	}
 
+	public void saveToFile(String msg)
+	{
+		try {
+			FileWriter f = new FileWriter("talk.txt", true);
+			PrintWriter print = new PrintWriter(new BufferedWriter(f));
+			print.println("Tavneet : "+msg);
+			print.close();
+		
+			
+		}
+		catch(Exception e) 
+		{
+			System.out.println(e);
+		}
+		
+		}
+	
 	public static JPanel formatLabel(String out) {
 
 		JPanel panel = new JPanel();
